@@ -1,18 +1,22 @@
 use tonic::{transport::Server, Request, Response, Status};
 use keyval::{GetValueRequest, GetValueReply, InsertKeyValueRequest, InsertKeyValueResponse};
 use keyval::value_server::{Value, ValueServer};
+mod engine;
 
 pub mod keyval {
     tonic::include_proto!("keyval"); // The string specified here must match the proto package name
 }
 
-#[derive(Debug, Default)]
-pub struct MyValue {}
+#[derive(Default)]
+pub struct MyValue {
+  engine: engine::Engine,
+}
 
 #[tonic::async_trait]
 impl Value for MyValue {
   async fn get_value(&self, request: Request<GetValueRequest>) -> Result<Response<GetValueReply>, Status> {
     let reply = GetValueReply{value: format!("value")};
+
     Ok(Response::new(reply))
   }
 

@@ -57,6 +57,13 @@ impl Engine {
       store: Mutex::new(store)
     });
   }
+
+}
+
+impl Default for Engine {
+  fn default() -> Self {
+    return Engine{store: Mutex::new(Store::new())};
+  }
 }
 
 #[test]
