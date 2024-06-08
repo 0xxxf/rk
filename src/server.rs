@@ -1,10 +1,13 @@
+use std::panic::resume_unwind;
+
+use bincode::de;
 use tonic::{transport::Server, Request, Response, Status};
 use keyval::{GetValueRequest, GetValueReply, InsertKeyValueRequest, InsertKeyValueResponse};
 use keyval::value_server::{Value, ValueServer};
 mod engine;
 
 pub mod keyval {
-    tonic::include_proto!("keyval"); // The string specified here must match the proto package name
+  tonic::include_proto!("keyval"); 
 }
 
 #[derive(Default)]
@@ -15,9 +18,21 @@ pub struct MyValue {
 #[tonic::async_trait]
 impl Value for MyValue {
   async fn get_value(&self, request: Request<GetValueRequest>) -> Result<Response<GetValueReply>, Status> {
-    let reply = GetValueReply{value: format!("value")};
+    let request = request.into_inner();
+    let key = request.key;
 
-    Ok(Response::new(reply))
+    let map = &self.engine.store.lock().unwrap().map;
+    let value = map.get(&key);
+
+    match value {
+      Some(r) => {
+        let reply = GetValueReply { value: r.to_string() };
+        return Ok(Response::new(reply));
+      }, 
+      None => {
+        return Result::Err(Status::not_found("Key not found"));
+      }
+    }
   }
 
   async fn insert_key_value(&self, request: Request<InsertKeyValueRequest>) -> Result<Response<InsertKeyValueResponse>, Status> {
@@ -35,5 +50,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     .add_service(ValueServer::new(greeter))
     .serve(addr)
     .await?;
+
   Ok(())
 }

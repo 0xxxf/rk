@@ -31,11 +31,11 @@ impl Store {
 
   pub fn save_state(&self, state_file: &str) -> Result<(), Error> {
     let encoded = bincode::encode_to_vec(self, config::standard())?;
-    //let mut file = File::open(state_file, OpenOptions::new().read(true))?;
     let mut file = OpenOptions::new()
       .create(true)
       .write(true)
       .open(state_file)?;
+
     file.write_all(&encoded)?;
 
     return Ok(())
@@ -57,7 +57,6 @@ impl Engine {
       store: Mutex::new(store)
     });
   }
-
 }
 
 impl Default for Engine {
