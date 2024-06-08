@@ -1,0 +1,21 @@
+[package]
+name = "rk"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.82"
+bincode = {version = "2.0.0-rc.1"}
+clap = {version = "4.5.4", features=["derive"]}
+tonic = "0.11"
+prost = "0.12"
+tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
+
+[[bin]] # Bin to run the HelloWorld gRPC server
+name = "rk-server"
+path = "src/server.rs"
+
+[build-dependencies]
+tonic-build = "0.11"
