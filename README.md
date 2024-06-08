@@ -1,8 +1,4 @@
 # rk
-Redis like key value store.
 
-# Running a server
-$ rk --serve=localhost:420 
+Rust key value store.
 
-# Connecting to a server
-$ rk hostname
