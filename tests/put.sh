@@ -1,0 +1,1 @@
+grpcurl -plaintext -import-path ../proto -proto rk.proto -d '{"key": "my_key", "value": "my_value"}' '[::1]:50051' keyval.Value/InsertKeyValue

@@ -1,1 +1,1 @@
-grpcurl -plaintext -import-path ../proto -proto rk.proto -d '{"key": "sample"}' '[::1]:50051' keyval.Value/GetValue
+grpcurl -plaintext -import-path ../proto -proto rk.proto -d '{"key": "my_key"}' '[::1]:50051' keyval.Value/GetValue

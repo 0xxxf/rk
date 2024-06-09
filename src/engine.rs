@@ -1,10 +1,11 @@
-use std::{borrow::Borrow, collections::HashMap, fs::{File, OpenOptions}, io::{Read, Write}, path::Path, string, sync::Mutex};
+use std::{borrow::Borrow, collections::HashMap, fs::{File, OpenOptions}, io::{Read, Write}, path::Path, string, sync::{Arc, Mutex}};
 use bincode::{config, Decode, Encode};
 
 use anyhow::Error;
 
+#[derive(Clone)]
 pub struct Engine {
-  pub store: Mutex<Store>
+  pub store: Arc<Mutex<Store>>
 }
 
 #[derive(Encode, Decode, Clone)]
@@ -47,24 +48,23 @@ impl Engine {
     let store = Store::from_state(state_file)
       .unwrap_or(Store::new());
     return Engine {
-      store: Mutex::new(store)
+      store: Arc::new(Mutex::new(store))
     };
   }
 
   pub fn from_state(state_file: &str) -> Result<Self, Error> {
     let store = Store::from_state(state_file)?;
     return Ok(Engine {
-      store: Mutex::new(store)
+      store: Arc::new(Mutex::new(store))
     });
   }
 }
 
 impl Default for Engine {
   fn default() -> Self {
-    return Engine{store: Mutex::new(Store::new())};
+    return Engine{store: Arc::new(Mutex::new(Store::new()))};
   }
 }
-
 #[test]
 fn test_state() {
   const STATE_FILE: &str = "state.bin";
