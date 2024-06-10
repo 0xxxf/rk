@@ -1,4 +1,3 @@
 # rk
-
-Rust key value store.
+A gRPC based key value store written in Rust.
 

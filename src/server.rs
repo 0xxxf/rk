@@ -54,19 +54,19 @@ impl Value for KeyValueService {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
   let addr = "[::1]:50051".parse()?;
-  let greeter = KeyValueService::with_preload();
-  let greeter_clone = greeter.clone();
+  let service = KeyValueService::with_preload();
+  let service_clone = service.clone();
 
   let task = task::spawn(async move {
     loop {
       let mut interval = time::interval(time::Duration::from_secs(5 * 60)); 
       interval.tick().await;
-      let _ = greeter_clone.engine.store.lock().unwrap().save_state("./state.bin");
+      let _ = service_clone.engine.store.lock().unwrap().save_state("./state.bin");
     }
   });
 
   Server::builder()
-    .add_service(ValueServer::new(greeter))
+    .add_service(ValueServer::new(service))
     .serve(addr)
     .await?;
 
